@@ -1,0 +1,124 @@
+{
+	"info": {
+		"_postman_id": "b2f2d884-8eb0-4574-88e1-4d54d129bbb6",
+		"name": "Transbank Test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://localhost:5000/people/",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"firstMame\": \"Gabriel\",\n        \"lastName\": \"Fuentes\",\n        \"age\": 11\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/people/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"people",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:5000/people/",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "557ae891-4e44-4e73-bb9f-9da68c742150",
+						"exec": [
+							"",
+							"//Flags for managing users added",
+							"let current_users_qty = 0;",
+							"let previous_users_qty  = pm.globals.get(\"USERS_QTY\");",
+							"if( !previous_users_qty) {",
+							"   pm.globals.set(\"USERS_QTY\", 0);",
+							"   previous_users_qty= 0;",
+							"}",
+							"",
+							"",
+							"//Object the host the api response",
+							"var responseJSON;",
+							"",
+							"//Validating API Response is in JSON format",
+							"try {",
+							"    tests['0: Status Code is 200'] = responseCode.code == 200;",
+							"    responseJSON = JSON.parse(responseBody); ",
+							"    tests['1: API response is a valid JSON'] = true;",
+							"    //update global users qty",
+							"    current_users_qty = responseJSON.length;",
+							"    pm.globals.set(\"USERS_QTY\", current_users_qty);",
+							"}",
+							"catch (e) { ",
+							"    responseJSON = {}; ",
+							"    tests['1 : API response is a valid JSON'] = false;",
+							"}",
+							"",
+							"//Validate a user was added",
+							"tests['2: At list an object was added'] = current_users_qty > previous_users_qty;",
+							"",
+							"",
+							"//Validate last user added",
+							"let user = responseJSON[responseJSON.length-1]",
+							"tests['3 User added contains First Name '] = _.has(user, 'firstMame');",
+							"tests['4 User added contains Last Name '] = _.has(user, 'lastName');",
+							"tests['5 User added contains Last Age '] = _.has(user, 'age');",
+							"tests['6 User added contains Username '] = _.has(user, 'username');",
+							"tests['7 User added contains ID '] = _.has(user, 'id');",
+							"",
+							"//Deeper id Validation",
+							"tests['8 User id has a 36 Characters'] = user.id.length == 36;",
+							"tests['9 User id contains 5 Segments'] = user.id.split('-').length-1 == 4;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"firstMame\": \"Aleida\",\n        \"lastName\": \"Perera\",\n        \"age\": 34,\n        \"username\":\"aperera\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/people/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"people",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
